@@ -262,21 +262,6 @@
             cursor: default;
             outline: none;
         }
-        
-        @media (max-width: 600px) {
-            .linktree-container {
-                grid-template-columns: 1fr; /* 1 columna en móvil */
-            }
-
-            .link-thumbnail {
-                width: 100%;
-                height: 140px;
-            }
-
-            .link-icon {
-                font-size: 1.4rem;
-            }
-        }
     </style>
 </head>
 <body>
@@ -342,7 +327,6 @@
             const instructionsBox = document.querySelector('.instructions');
             const toggleAdminBtn = document.getElementById('toggle-admin-btn');
             
-            // Enlaces fijos con miniaturas
             let links = [
               { title: "Chubbies Burger", url: "http://pide.chubbiesburger.mx/", thumbnail: "https://i.postimg.cc/yYHzQ50c/IMG-4341.jpg" },
               { title: "Muy Gallito",      url: "https://order.foodbot.ai/muygallito/", thumbnail: "https://i.postimg.cc/bYV575Xv/IMG-4342.jpg" },
@@ -352,12 +336,10 @@
               { title: "Palermo",          url: "https://order.foodbot.ai/palermo/", thumbnail: "https://i.postimg.cc/Z54DpzpQ/IMG-4339.jpg" }
             ];
 
-            // Guardar enlaces en localStorage (si sigues usando el formulario)
             function saveLinks() {
                 localStorage.setItem('linktreeLinks', JSON.stringify(links));
             }
             
-            // Cargar enlaces desde localStorage
             function loadLinks() {
                 const savedLinks = localStorage.getItem('linktreeLinks');
                 if (savedLinks) {
@@ -365,7 +347,6 @@
                 }
             }
             
-            // Renderizar los enlaces
             function renderLinks() {
                 linksContainer.innerHTML = '';
                 
@@ -374,7 +355,6 @@
                     linkElement.className = 'link-item';
                     linkElement.setAttribute('data-index', index);
                     
-                    // Determinar el icono basado en el dominio
                     let iconClass = 'fas fa-link';
                     const url = link.url.toLowerCase();
                     
@@ -389,7 +369,6 @@
                     else if (url.includes('whatsapp')) iconClass = 'fab fa-whatsapp';
                     else if (url.includes('spotify')) iconClass = 'fab fa-spotify';
                     
-                    // Usar la miniatura si existe, de lo contrario usar un placeholder
                     const thumbnailUrl = link.thumbnail || `https://via.placeholder.com/100/6a11cb/ffffff?text=${encodeURIComponent(link.title.substring(0, 10))}`;
                     
                     linkElement.innerHTML = `
@@ -403,7 +382,6 @@
                         </div>
                     `;
                     
-                    // Abrir enlace al hacer clic
                     linkElement.addEventListener('click', function() {
                         window.open(link.url, '_blank');
                     });
@@ -412,7 +390,6 @@
                 });
             }
             
-            // Agregar un nuevo enlace
             function addLink() {
                 const title = linkTitleInput.value.trim();
                 const url = linkUrlInput.value.trim();
@@ -435,7 +412,6 @@
                 linkUrlInput.value = '';
             }
             
-            // Generar miniaturas (simulado)
             async function generateThumbnails() {
                 if (links.length === 0) {
                     alert('No hay enlaces para generar miniaturas');
@@ -486,7 +462,6 @@
                 alert('Miniaturas generadas (simuladas). Para producción, implementa un backend propio.');
             }
             
-            // Reiniciar los enlaces (puedes ajustarlo para volver a los 6 fijos)
             function resetLinks() {
                 if (confirm('¿Estás seguro de que quieres eliminar todos los enlaces y restaurar los ejemplos?')) {
                     links = [
@@ -503,14 +478,12 @@
                 }
             }
 
-            // Mostrar/ocultar formulario e instrucciones con el botón invisible
             toggleAdminBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 addLinkForm.classList.toggle('visible');
                 instructionsBox.classList.toggle('visible');
             });
             
-            // Event listeners
             addLinkBtn.addEventListener('click', addLink);
             generateThumbnailsBtn.addEventListener('click', generateThumbnails);
             resetLinksBtn.addEventListener('click', resetLinks);
@@ -521,7 +494,6 @@
                 }
             });
             
-            // Cargar enlaces al iniciar
             loadLinks();
             renderLinks();
         });
