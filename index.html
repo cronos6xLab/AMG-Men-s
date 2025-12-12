@@ -62,14 +62,20 @@
             padding: 30px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
             margin-bottom: 40px;
+
+            /* GRID 2 COLUMNAS */
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
         }
         
         .link-item {
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            align-items: stretch;
             background-color: white;
             border-radius: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 0;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
@@ -84,34 +90,35 @@
         }
         
         .link-thumbnail {
-            width: 100px;
-            height: 100px;
+            width: 100%;
+            height: 120px;
             object-fit: cover;
             flex-shrink: 0;
         }
         
         .link-content {
-            padding: 15px 20px;
+            padding: 10px 12px;
             flex-grow: 1;
         }
         
         .link-title {
             font-weight: 600;
-            font-size: 1.2rem;
-            margin-bottom: 5px;
+            font-size: 1rem;
+            margin-bottom: 4px;
             color: #333;
         }
         
         .link-url {
             color: #666;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             word-break: break-all;
         }
         
         .link-icon {
-            width: 60px;
-            text-align: center;
-            font-size: 1.8rem;
+            width: 100%;
+            text-align: right;
+            padding: 6px 10px;
+            font-size: 1.2rem;
             color: #6a11cb;
         }
         
@@ -230,7 +237,7 @@
             opacity: 0.8;
         }
 
-        /* ---- OCULTAR FORMULARIO + INSTRUCCIONES POR DEFECTO ---- */
+        /* Ocultar formulario + instrucciones por defecto */
         .add-link-form,
         .instructions {
             display: none;
@@ -241,44 +248,33 @@
             display: block;
         }
 
-        /* Botón invisible al fondo de la página para togglear admin */
+        /* Botón invisible al fondo para togglear admin */
         #toggle-admin-btn {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 10px;           /* franja casi invisible */
+            height: 10px;
             background: transparent;
             border: none;
             padding: 0;
             margin: 0;
-            cursor: default;        /* pon pointer si lo quieres notar más */
+            cursor: default;
             outline: none;
         }
         
         @media (max-width: 600px) {
-            .link-item {
-                flex-direction: column;
-                text-align: center;
+            .linktree-container {
+                grid-template-columns: 1fr; /* 1 columna en móvil */
             }
-            
+
             .link-thumbnail {
                 width: 100%;
-                height: 150px;
+                height: 140px;
             }
-            
+
             .link-icon {
-                width: 100%;
-                padding: 10px;
-                font-size: 2rem;
-            }
-            
-            .buttons {
-                flex-direction: column;
-            }
-            
-            h1 {
-                font-size: 2rem;
+                font-size: 1.4rem;
             }
         }
     </style>
@@ -346,17 +342,17 @@
             const instructionsBox = document.querySelector('.instructions');
             const toggleAdminBtn = document.getElementById('toggle-admin-btn');
             
-            // Enlaces iniciales de ejemplo
-           let links = [
-  { title: "Chubbies Burger", url: "http://pide.chubbiesburger.mx/", thumbnail: "https://i.postimg.cc/yYHzQ50c/IMG-4341.jpg" },
-  { title: "Muy Gallito",      url: "https://order.foodbot.ai/muygallito/", thumbnail: "https://i.postimg.cc/bYV575Xv/IMG-4342.jpg" },
-  { title: "FatBastard",       url: "https://order.foodbot.ai/fatbastard/", thumbnail: "https://i.postimg.cc/qM95RCvp/IMG-4336.jpg" },
-  { title: "BrassMonkey",      url: "https://order.foodbot.ai/brassmonkey/", thumbnail: "https://i.postimg.cc/NfhnGHM2/IMG-4343.jpg" },
-  { title: "TiinThai",         url: "https://order.foodbot.ai/tiinthai/", thumbnail: "https://i.postimg.cc/wBbWCtPP/IMG-4338.jpg" },
-  { title: "Palermo",          url: "https://order.foodbot.ai/palermo/", thumbnail: "https://i.postimg.cc/Z54DpzpQ/IMG-4339.jpg" }
+            // Enlaces fijos con miniaturas
+            let links = [
+              { title: "Chubbies Burger", url: "http://pide.chubbiesburger.mx/", thumbnail: "https://i.postimg.cc/yYHzQ50c/IMG-4341.jpg" },
+              { title: "Muy Gallito",      url: "https://order.foodbot.ai/muygallito/", thumbnail: "https://i.postimg.cc/bYV575Xv/IMG-4342.jpg" },
+              { title: "FatBastard",       url: "https://order.foodbot.ai/fatbastard/", thumbnail: "https://i.postimg.cc/qM95RCvp/IMG-4336.jpg" },
+              { title: "BrassMonkey",      url: "https://order.foodbot.ai/brassmonkey/", thumbnail: "https://i.postimg.cc/NfhnGHM2/IMG-4343.jpg" },
+              { title: "TiinThai",         url: "https://order.foodbot.ai/tiinthai/", thumbnail: "https://i.postimg.cc/wBbWCtPP/IMG-4338.jpg" },
+              { title: "Palermo",          url: "https://order.foodbot.ai/palermo/", thumbnail: "https://i.postimg.cc/Z54DpzpQ/IMG-4339.jpg" }
             ];
 
-            // Guardar enlaces en localStorage
+            // Guardar enlaces en localStorage (si sigues usando el formulario)
             function saveLinks() {
                 localStorage.setItem('linktreeLinks', JSON.stringify(links));
             }
@@ -426,7 +422,6 @@
                     return;
                 }
                 
-                // Validar URL
                 try {
                     new URL(url);
                 } catch (e) {
@@ -491,15 +486,16 @@
                 alert('Miniaturas generadas (simuladas). Para producción, implementa un backend propio.');
             }
             
-            // Reiniciar los enlaces
+            // Reiniciar los enlaces (puedes ajustarlo para volver a los 6 fijos)
             function resetLinks() {
                 if (confirm('¿Estás seguro de que quieres eliminar todos los enlaces y restaurar los ejemplos?')) {
                     links = [
-                        { title: "GitHub", url: "https://github.com", thumbnail: "" },
-                        { title: "LinkedIn", url: "https://linkedin.com", thumbnail: "" },
-                        { title: "Twitter", url: "https://twitter.com", thumbnail: "" },
-                        { title: "Mi Portfolio", url: "https://portafolio-ejemplo.netlify.app", thumbnail: "" },
-                        { title: "Mi Blog Personal", url: "https://ejemplo-blog.com", thumbnail: "" }
+                        { title: "Chubbies Burger", url: "http://pide.chubbiesburger.mx/", thumbnail: "https://i.postimg.cc/yYHzQ50c/IMG-4341.jpg" },
+                        { title: "Muy Gallito",      url: "https://order.foodbot.ai/muygallito/", thumbnail: "https://i.postimg.cc/bYV575Xv/IMG-4342.jpg" },
+                        { title: "FatBastard",       url: "https://order.foodbot.ai/fatbastard/", thumbnail: "https://i.postimg.cc/qM95RCvp/IMG-4336.jpg" },
+                        { title: "BrassMonkey",      url: "https://order.foodbot.ai/brassmonkey/", thumbnail: "https://i.postimg.cc/NfhnGHM2/IMG-4343.jpg" },
+                        { title: "TiinThai",         url: "https://order.foodbot.ai/tiinthai/", thumbnail: "https://i.postimg.cc/wBbWCtPP/IMG-4338.jpg" },
+                        { title: "Palermo",          url: "https://order.foodbot.ai/palermo/", thumbnail: "https://i.postimg.cc/Z54DpzpQ/IMG-4339.jpg" }
                     ];
                     
                     localStorage.removeItem('linktreeLinks');
