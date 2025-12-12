@@ -1,533 +1,533 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mi Linktree Personalizado</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-* {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Linktree Personalizado</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .bio {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .linktree-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 40px;
+        }
+        
+        .link-item {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-left: 5px solid #6a11cb;
+        }
+        
+        .link-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-left-color: #2575fc;
+        }
+        
+        .link-thumbnail {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        
+        .link-content {
+            padding: 15px 20px;
+            flex-grow: 1;
+        }
+        
+        .link-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .link-url {
+            color: #666;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+        
+        .link-icon {
+            width: 60px;
+            text-align: center;
+            font-size: 1.8rem;
+            color: #6a11cb;
+        }
+        
+        .add-link-form {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        input[type="text"], input[type="url"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus, input[type="url"]:focus {
+            border-color: #6a11cb;
+            outline: none;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .btn-add {
+            background-color: #6a11cb;
+            color: white;
+        }
+        
+        .btn-add:hover {
+            background-color: #5a0db3;
+        }
+        
+        .btn-generate {
+            background-color: #2575fc;
+            color: white;
+        }
+        
+        .btn-generate:hover {
+            background-color: #1c65e0;
+        }
+        
+        .btn-reset {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 2px solid #e1e1e1;
+        }
+        
+        .btn-reset:hover {
+            background-color: #e9ecef;
+        }
+        
+        .instructions {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .instructions h3 {
+            color: #6a11cb;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
 
-body {
-background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-min-height: 100vh;
-padding: 20px;
-color: #333;
-}
+        /* ---- OCULTAR FORMULARIO + INSTRUCCIONES POR DEFECTO ---- */
+        .add-link-form,
+        .instructions {
+            display: none;
+        }
 
-.container {
-max-width: 800px;
-margin: 0 auto;
-}
+        .add-link-form.visible,
+        .instructions.visible {
+            display: block;
+        }
 
-header {
-text-align: center;
-padding: 30px 20px;
-color: white;
-margin-bottom: 30px;
-}
-
-.profile-img {
-width: 150px;
-height: 150px;
-border-radius: 50%;
-object-fit: cover;
-border: 5px solid rgba(255, 255, 255, 0.3);
-margin-bottom: 20px;
-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-h1 {
-font-size: 2.5rem;
-margin-bottom: 10px;
-text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.bio {
-font-size: 1.2rem;
-opacity: 0.9;
-max-width: 600px;
-margin: 0 auto;
-line-height: 1.5;
-}
-
-.linktree-container {
-background-color: rgba(255, 255, 255, 0.95);
-border-radius: 20px;
-padding: 30px;
-box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-margin-bottom: 40px;
-}
-
-.link-item {
-display: flex;
-align-items: center;
-background-color: white;
-border-radius: 12px;
-margin-bottom: 20px;
-overflow: hidden;
-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-transition: all 0.3s ease;
-cursor: pointer;
-border-left: 5px solid #6a11cb;
-}
-
-.link-item:hover {
-transform: translateY(-5px);
-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-border-left-color: #2575fc;
-}
-
-.link-thumbnail {
-width: 100px;
-height: 100px;
-object-fit: cover;
-flex-shrink: 0;
-}
-
-.link-content {
-padding: 15px 20px;
-flex-grow: 1;
-}
-
-.link-title {
-font-weight: 600;
-font-size: 1.2rem;
-margin-bottom: 5px;
-color: #333;
-}
-
-.link-url {
-color: #666;
-font-size: 0.9rem;
-word-break: break-all;
-}
-
-.link-icon {
-width: 60px;
-text-align: center;
-font-size: 1.8rem;
-color: #6a11cb;
-}
-
-.add-link-form {
-background-color: white;
-border-radius: 15px;
-padding: 25px;
-margin-bottom: 30px;
-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-
-.form-title {
-font-size: 1.5rem;
-margin-bottom: 20px;
-color: #333;
-text-align: center;
-}
-
-.form-group {
-margin-bottom: 15px;
-}
-
-label {
-display: block;
-margin-bottom: 5px;
-font-weight: 600;
-color: #555;
-}
-
-input[type="text"], input[type="url"] {
-width: 100%;
-padding: 12px 15px;
-border: 2px solid #e1e1e1;
-border-radius: 8px;
-font-size: 1rem;
-transition: border-color 0.3s;
-}
-
-input[type="text"]:focus, input[type="url"]:focus {
-border-color: #6a11cb;
-outline: none;
-}
-
-.buttons {
-display: flex;
-gap: 10px;
-margin-top: 20px;
-}
-
-button {
-padding: 12px 25px;
-border: none;
-border-radius: 8px;
-font-weight: 600;
-font-size: 1rem;
-cursor: pointer;
-transition: all 0.3s ease;
-flex: 1;
-}
-
-.btn-add {
-background-color: #6a11cb;
-color: white;
-}
-
-.btn-add:hover {
-background-color: #5a0db3;
-}
-
-.btn-generate {
-background-color: #2575fc;
-color: white;
-}
-
-.btn-generate:hover {
-background-color: #1c65e0;
-}
-
-.btn-reset {
-background-color: #f8f9fa;
-color: #333;
-border: 2px solid #e1e1e1;
-}
-
-.btn-reset:hover {
-background-color: #e9ecef;
-}
-
-.instructions {
-background-color: rgba(255, 255, 255, 0.9);
-border-radius: 15px;
-padding: 20px;
-margin-top: 20px;
-font-size: 0.95rem;
-line-height: 1.6;
-}
-
-.instructions h3 {
-color: #6a11cb;
-margin-bottom: 10px;
-}
-
-.instructions ol {
-padding-left: 20px;
-}
-
-.instructions li {
-margin-bottom: 8px;
-}
-
-footer {
-text-align: center;
-color: white;
-padding: 20px;
-font-size: 0.9rem;
-opacity: 0.8;
-}
-
-@media (max-width: 600px) {
-.link-item {
-flex-direction: column;
-text-align: center;
-}
-
-.link-thumbnail {
-width: 100%;
-height: 150px;
-}
-
-.link-icon {
-width: 100%;
-padding: 10px;
-font-size: 2rem;
-}
-
-.buttons {
-flex-direction: column;
-}
-
-h1 {
-font-size: 2rem;
-}
-}
-</style>
+        /* Botón invisible al fondo de la página para togglear admin */
+        #toggle-admin-btn {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;           /* franja casi invisible */
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            cursor: default;        /* pon pointer si lo quieres notar más */
+            outline: none;
+        }
+        
+        @media (max-width: 600px) {
+            .link-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .link-thumbnail {
+                width: 100%;
+                height: 150px;
+            }
+            
+            .link-icon {
+                width: 100%;
+                padding: 10px;
+                font-size: 2rem;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-<header>
-<img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Foto de perfil" class="profile-img">
-<h1>@tuusername</h1>
-<p class="bio">Bienvenido a mi página de enlaces. Aquí encontrarás todos mis perfiles sociales, proyectos y contenido relevante.</p>
-</header>
+    <div class="container">
+        <header>
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=500&q=80" alt="Foto de perfil" class="profile-img">
+            <h1>@tuusername</h1>
+            <p class="bio">Bienvenido a mi página de enlaces. Aquí encontrarás todos mis perfiles sociales, proyectos y contenido relevante.</p>
+        </header>
+        
+        <div class="add-link-form">
+            <h2 class="form-title">Agregar Nuevo Enlace</h2>
+            <div class="form-group">
+                <label for="link-title">Título del Enlace</label>
+                <input type="text" id="link-title" placeholder="Ej: Mi Instagram" value="Mi Instagram">
+            </div>
+            <div class="form-group">
+                <label for="link-url">URL</label>
+                <input type="url" id="link-url" placeholder="https://ejemplo.com" value="https://instagram.com">
+            </div>
+            <div class="buttons">
+                <button class="btn-add" id="add-link-btn"><i class="fas fa-plus-circle"></i> Agregar Enlace</button>
+                <button class="btn-generate" id="generate-thumbnails-btn"><i class="fas fa-image"></i> Generar Miniaturas</button>
+                <button class="btn-reset" id="reset-links-btn"><i class="fas fa-redo"></i> Reiniciar</button>
+            </div>
+        </div>
+        
+        <div class="linktree-container" id="links-container">
+            <!-- Los enlaces se agregarán aquí dinámicamente -->
+        </div>
+        
+        <div class="instructions">
+            <h3>Instrucciones para usar esta página Linktree:</h3>
+            <ol>
+                <li>Agrega un título y la URL de tu enlace en el formulario superior.</li>
+                <li>Haz clic en "Agregar Enlace" para añadirlo a tu lista.</li>
+                <li>Una vez que tengas todos tus enlaces, haz clic en "Generar Miniaturas" para obtener imágenes de vista previa de cada sitio.</li>
+                <li>Haz clic en cualquier enlace para abrirlo en una nueva pestaña.</li>
+                <li>Para personalizar la página, edita el archivo HTML directamente en GitHub.</li>
+                <li>Para cambiar la imagen de perfil, actualiza la URL en la etiqueta img con class="profile-img".</li>
+            </ol>
+        </div>
+        
+        <footer>
+            <p>Página Linktree personalizada &copy; 2023 | Creada con HTML, CSS y JavaScript</p>
+            <p>Las miniaturas se generan mediante un servicio de captura de pantalla</p>
+        </footer>
+    </div>
 
-<div class="add-link-form">
-<h2 class="form-title">Agregar Nuevo Enlace</h2>
-<div class="form-group">
-<label for="link-title">Título del Enlace</label>
-<input type="text" id="link-title" placeholder="Ej: Mi Instagram" value="Mi Instagram">
-</div>
-<div class="form-group">
-<label for="link-url">URL</label>
-<input type="url" id="link-url" placeholder="https://ejemplo.com" value="https://instagram.com">
-</div>
-<div class="buttons">
-<button class="btn-add" id="add-link-btn"><i class="fas fa-plus-circle"></i> Agregar Enlace</button>
-<button class="btn-generate" id="generate-thumbnails-btn"><i class="fas fa-image"></i> Generar Miniaturas</button>
-<button class="btn-reset" id="reset-links-btn"><i class="fas fa-redo"></i> Reiniciar</button>
-</div>
-</div>
+    <!-- Botón invisible para mostrar/ocultar formulario e instrucciones -->
+    <button id="toggle-admin-btn" aria-label="Alternar panel de edición"></button>
 
-<div class="linktree-container" id="links-container">
-<!-- Los enlaces se agregarán aquí dinámicamente -->
-</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const linksContainer = document.getElementById('links-container');
+            const addLinkBtn = document.getElementById('add-link-btn');
+            const generateThumbnailsBtn = document.getElementById('generate-thumbnails-btn');
+            const resetLinksBtn = document.getElementById('reset-links-btn');
+            const linkTitleInput = document.getElementById('link-title');
+            const linkUrlInput = document.getElementById('link-url');
 
-<div class="instructions">
-<h3>Instrucciones para usar esta página Linktree:</h3>
-<ol>
-<li>Agrega un título y la URL de tu enlace en el formulario superior.</li>
-<li>Haz clic en "Agregar Enlace" para añadirlo a tu lista.</li>
-<li>Una vez que tengas todos tus enlaces, haz clic en "Generar Miniaturas" para obtener imágenes de vista previa de cada sitio.</li>
-<li>Haz clic en cualquier enlace para abrirlo en una nueva pestaña.</li>
-<li>Para personalizar la página, edita el archivo HTML directamente en GitHub.</li>
-<li>Para cambiar la imagen de perfil, actualiza la URL en la etiqueta img con class="profile-img".</li>
-</ol>
-</div>
+            const addLinkForm = document.querySelector('.add-link-form');
+            const instructionsBox = document.querySelector('.instructions');
+            const toggleAdminBtn = document.getElementById('toggle-admin-btn');
+            
+            // Enlaces iniciales de ejemplo
+            let links = [
+                { title: "GitHub", url: "https://github.com", thumbnail: "" },
+                { title: "LinkedIn", url: "https://linkedin.com", thumbnail: "" },
+                { title: "Twitter", url: "https://twitter.com", thumbnail: "" },
+                { title: "Mi Portfolio", url: "https://portafolio-ejemplo.netlify.app", thumbnail: "" },
+                { title: "Mi Blog Personal", url: "https://ejemplo-blog.com", thumbnail: "" }
+            ];
+            
+            // Guardar enlaces en localStorage
+            function saveLinks() {
+                localStorage.setItem('linktreeLinks', JSON.stringify(links));
+            }
+            
+            // Cargar enlaces desde localStorage
+            function loadLinks() {
+                const savedLinks = localStorage.getItem('linktreeLinks');
+                if (savedLinks) {
+                    links = JSON.parse(savedLinks);
+                }
+            }
+            
+            // Renderizar los enlaces
+            function renderLinks() {
+                linksContainer.innerHTML = '';
+                
+                links.forEach((link, index) => {
+                    const linkElement = document.createElement('div');
+                    linkElement.className = 'link-item';
+                    linkElement.setAttribute('data-index', index);
+                    
+                    // Determinar el icono basado en el dominio
+                    let iconClass = 'fas fa-link';
+                    const url = link.url.toLowerCase();
+                    
+                    if (url.includes('github')) iconClass = 'fab fa-github';
+                    else if (url.includes('linkedin')) iconClass = 'fab fa-linkedin';
+                    else if (url.includes('twitter') || url.includes('x.com')) iconClass = 'fab fa-twitter';
+                    else if (url.includes('instagram')) iconClass = 'fab fa-instagram';
+                    else if (url.includes('youtube')) iconClass = 'fab fa-youtube';
+                    else if (url.includes('facebook')) iconClass = 'fab fa-facebook';
+                    else if (url.includes('tiktok')) iconClass = 'fab fa-tiktok';
+                    else if (url.includes('discord')) iconClass = 'fab fa-discord';
+                    else if (url.includes('whatsapp')) iconClass = 'fab fa-whatsapp';
+                    else if (url.includes('spotify')) iconClass = 'fab fa-spotify';
+                    
+                    // Usar la miniatura si existe, de lo contrario usar un placeholder
+                    const thumbnailUrl = link.thumbnail || `https://via.placeholder.com/100/6a11cb/ffffff?text=${encodeURIComponent(link.title.substring(0, 10))}`;
+                    
+                    linkElement.innerHTML = `
+                        <img src="${thumbnailUrl}" alt="${link.title}" class="link-thumbnail">
+                        <div class="link-content">
+                            <div class="link-title">${link.title}</div>
+                            <div class="link-url">${link.url}</div>
+                        </div>
+                        <div class="link-icon">
+                            <i class="${iconClass}"></i>
+                        </div>
+                    `;
+                    
+                    // Abrir enlace al hacer clic
+                    linkElement.addEventListener('click', function() {
+                        window.open(link.url, '_blank');
+                    });
+                    
+                    linksContainer.appendChild(linkElement);
+                });
+            }
+            
+            // Agregar un nuevo enlace
+            function addLink() {
+                const title = linkTitleInput.value.trim();
+                const url = linkUrlInput.value.trim();
+                
+                if (!title || !url) {
+                    alert('Por favor, completa ambos campos');
+                    return;
+                }
+                
+                // Validar URL
+                try {
+                    new URL(url);
+                } catch (e) {
+                    alert('Por favor, ingresa una URL válida');
+                    return;
+                }
+                
+                links.push({ title, url, thumbnail: "" });
+                saveLinks();
+                renderLinks();
+                linkUrlInput.value = '';
+            }
+            
+            // Generar miniaturas (simulado)
+            async function generateThumbnails() {
+                if (links.length === 0) {
+                    alert('No hay enlaces para generar miniaturas');
+                    return;
+                }
+                
+                alert('Generando miniaturas... Esto puede tomar unos segundos. En producción, usa tu propia API/backend.');
+                
+                const apiKey = 'demo';
+                
+                for (let i = 0; i < links.length; i++) {
+                    const link = links[i];
+                    
+                    if (!link.thumbnail || link.thumbnail.includes('placeholder')) {
+                        const screenshotUrl = `https://api.screenshotapi.net/screenshot?url=${encodeURIComponent(link.url)}&apiKey=${apiKey}&fullPage=false`;
+                        
+                        try {
+                            await new Promise(resolve => setTimeout(resolve, 300));
+                            
+                            let thumbnail = '';
+                            const domain = new URL(link.url).hostname;
+                            
+                            if (domain.includes('github')) {
+                                thumbnail = 'https://raw.githubusercontent.com/github/explore/78df643247d429f6cc873026c0622819ad797942/topics/github/github.png';
+                            } else if (domain.includes('linkedin')) {
+                                thumbnail = 'https://cdn-icons-png.flaticon.com/512/174/174857.png';
+                            } else if (domain.includes('twitter') || domain.includes('x.com')) {
+                                thumbnail = 'https://cdn-icons-png.flaticon.com/512/733/733579.png';
+                            } else {
+                                const domainName = domain.replace('www.', '').split('.')[0];
+                                thumbnail = `https://via.placeholder.com/100/2575fc/ffffff?text=${encodeURIComponent(domainName.substring(0, 15))}`;
+                            }
+                            
+                            link.thumbnail = thumbnail;
+                            links[i] = link;
+                            renderLinks();
+                            
+                        } catch (error) {
+                            console.error('Error generando miniatura:', error);
+                            link.thumbnail = `https://via.placeholder.com/100/cccccc/333333?text=Error`;
+                            links[i] = link;
+                            renderLinks();
+                        }
+                    }
+                }
+                
+                saveLinks();
+                alert('Miniaturas generadas (simuladas). Para producción, implementa un backend propio.');
+            }
+            
+            // Reiniciar los enlaces
+            function resetLinks() {
+                if (confirm('¿Estás seguro de que quieres eliminar todos los enlaces y restaurar los ejemplos?')) {
+                    links = [
+                        { title: "GitHub", url: "https://github.com", thumbnail: "" },
+                        { title: "LinkedIn", url: "https://linkedin.com", thumbnail: "" },
+                        { title: "Twitter", url: "https://twitter.com", thumbnail: "" },
+                        { title: "Mi Portfolio", url: "https://portafolio-ejemplo.netlify.app", thumbnail: "" },
+                        { title: "Mi Blog Personal", url: "https://ejemplo-blog.com", thumbnail: "" }
+                    ];
+                    
+                    localStorage.removeItem('linktreeLinks');
+                    renderLinks();
+                }
+            }
 
-<footer>
-<p>Página Linktree personalizada &copy; 2023 | Creada con HTML, CSS y JavaScript</p>
-<p>Las miniaturas se generan mediante un servicio de captura de pantalla</p>
-</footer>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-const linksContainer = document.getElementById('links-container');
-const addLinkBtn = document.getElementById('add-link-btn');
-const generateThumbnailsBtn = document.getElementById('generate-thumbnails-btn');
-const resetLinksBtn = document.getElementById('reset-links-btn');
-const linkTitleInput = document.getElementById('link-title');
-const linkUrlInput = document.getElementById('link-url');
-
-// Enlaces iniciales de ejemplo
-let links = [
-{ title: "GitHub", url: "https://github.com", thumbnail: "" },
-{ title: "LinkedIn", url: "https://linkedin.com", thumbnail: "" },
-{ title: "Twitter", url: "https://twitter.com", thumbnail: "" },
-{ title: "Mi Portfolio", url: "https://portafolio-ejemplo.netlify.app", thumbnail: "" },
-{ title: "Mi Blog Personal", url: "https://ejemplo-blog.com", thumbnail: "" }
-];
-
-// Función para guardar enlaces en localStorage
-function saveLinks() {
-localStorage.setItem('linktreeLinks', JSON.stringify(links));
-}
-
-// Función para cargar enlaces desde localStorage
-function loadLinks() {
-const savedLinks = localStorage.getItem('linktreeLinks');
-if (savedLinks) {
-links = JSON.parse(savedLinks);
-}
-}
-
-// Función para renderizar los enlaces
-function renderLinks() {
-linksContainer.innerHTML = '';
-
-links.forEach((link, index) => {
-const linkElement = document.createElement('div');
-linkElement.className = 'link-item';
-linkElement.setAttribute('data-index', index);
-
-// Determinar el icono basado en el dominio
-let iconClass = 'fas fa-link';
-const url = link.url.toLowerCase();
-
-if (url.includes('github')) iconClass = 'fab fa-github';
-else if (url.includes('linkedin')) iconClass = 'fab fa-linkedin';
-else if (url.includes('twitter') || url.includes('x.com')) iconClass = 'fab fa-twitter';
-else if (url.includes('instagram')) iconClass = 'fab fa-instagram';
-else if (url.includes('youtube')) iconClass = 'fab fa-youtube';
-else if (url.includes('facebook')) iconClass = 'fab fa-facebook';
-else if (url.includes('tiktok')) iconClass = 'fab fa-tiktok';
-else if (url.includes('discord')) iconClass = 'fab fa-discord';
-else if (url.includes('whatsapp')) iconClass = 'fab fa-whatsapp';
-else if (url.includes('spotify')) iconClass = 'fab fa-spotify';
-
-// Usar la miniatura si existe, de lo contrario usar una imagen placeholder
-const thumbnailUrl = link.thumbnail || `https://via.placeholder.com/100/6a11cb/ffffff?text=${encodeURIComponent(link.title.substring(0, 10))}`;
-
-linkElement.innerHTML = `
-<img src="${thumbnailUrl}" alt="${link.title}" class="link-thumbnail">
-<div class="link-content">
-<div class="link-title">${link.title}</div>
-<div class="link-url">${link.url}</div>
-</div>
-<div class="link-icon">
-<i class="${iconClass}"></i>
-</div>
-`;
-
-// Abrir enlace al hacer clic
-linkElement.addEventListener('click', function() {
-window.open(link.url, '_blank');
-});
-
-linksContainer.appendChild(linkElement);
-});
-}
-
-// Función para agregar un nuevo enlace
-function addLink() {
-const title = linkTitleInput.value.trim();
-const url = linkUrlInput.value.trim();
-
-if (!title || !url) {
-alert('Por favor, completa ambos campos');
-return;
-}
-
-// Validar URL
-try {
-new URL(url);
-} catch (e) {
-alert('Por favor, ingresa una URL válida');
-return;
-}
-
-// Agregar el enlace a la lista
-links.push({ title, url, thumbnail: "" });
-
-// Guardar en localStorage
-saveLinks();
-
-// Renderizar los enlaces actualizados
-renderLinks();
-
-// Limpiar campos (excepto el título, mantenerlo para agregar enlaces similares)
-linkUrlInput.value = '';
-}
-
-// Función para generar miniaturas usando un servicio de captura de pantalla
-async function generateThumbnails() {
-if (links.length === 0) {
-alert('No hay enlaces para generar miniaturas');
-return;
-}
-
-alert('Generando miniaturas... Esto puede tomar unos segundos. Las miniaturas se generarán usando un servicio de captura de pantalla. En producción, deberías usar una API propia para evitar límites de uso.');
-
-// En una implementación real, aquí llamarías a tu propio servidor o API
-// para generar las miniaturas y evitar problemas de CORS y límites de uso
-
-// Para este ejemplo, usaremos un servicio público con limitaciones
-// Nota: Este servicio tiene límites y puede no funcionar para todos los sitios
-const apiKey = 'demo'; // En producción, obtén tu propia API key de un servicio como screenshotapi.net
-
-for (let i = 0; i < links.length; i++) {
-const link = links[i];
-
-// Solo generar miniatura si no tiene una ya
-if (!link.thumbnail || link.thumbnail.includes('placeholder')) {
-// Usar un servicio de captura de pantalla (ejemplo con placeholder)
-// En producción, deberías usar tu propio backend para esto
-// para evitar problemas de CORS y límites de la API
-
-// Para este ejemplo, usaremos un servicio gratuito con limitaciones
-const screenshotUrl = `https://api.screenshotapi.net/screenshot?url=${encodeURIComponent(link.url)}&apiKey=${apiKey}&fullPage=false`;
-
-// Intentar cargar la miniatura
-try {
-// En un caso real, aquí harías una petición a la API
-// Pero para este ejemplo, usaremos miniaturas de ejemplo
-// basadas en el dominio para simular el funcionamiento
-
-// Simulamos un retraso de carga
-await new Promise(resolve => setTimeout(resolve, 300));
-
-// Asignar una miniatura basada en el dominio (en lugar de llamar a la API real)
-let thumbnail = '';
-const domain = new URL(link.url).hostname;
-
-// Usar miniaturas de ejemplo para dominios conocidos
-if (domain.includes('github')) {
-thumbnail = 'https://raw.githubusercontent.com/github/explore/78df643247d429f6cc873026c0622819ad797942/topics/github/github.png';
-} else if (domain.includes('linkedin')) {
-thumbnail = 'https://cdn-icons-png.flaticon.com/512/174/174857.png';
-} else if (domain.includes('twitter') || domain.includes('x.com')) {
-thumbnail = 'https://cdn-icons-png.flaticon.com/512/733/733579.png';
-} else {
-// Para otros dominios, usar un servicio de placeholder con el nombre del dominio
-const domainName = domain.replace('www.', '').split('.')[0];
-thumbnail = `https://via.placeholder.com/100/2575fc/ffffff?text=${encodeURIComponent(domainName.substring(0, 15))}`;
-}
-
-link.thumbnail = thumbnail;
-
-// Actualizar el enlace específico en la lista
-links[i] = link;
-
-// Renderizar después de cada miniatura para mostrar progreso
-renderLinks();
-
-} catch (error) {
-console.error('Error generando miniatura:', error);
-// Si falla, usar un placeholder
-link.thumbnail = `https://via.placeholder.com/100/cccccc/333333?text=Error`;
-links[i] = link;
-renderLinks();
-}
-}
-}
-
-// Guardar enlaces con miniaturas
-saveLinks();
-alert('Miniaturas generadas. Nota: Para producción, implementa un backend propio para generar miniaturas y evita depender de APIs públicas con límites.');
-}
-
-// Función para reiniciar los enlaces
-function resetLinks() {
-if (confirm('¿Estás seguro de que quieres eliminar todos los enlaces y restaurar los ejemplos?')) {
-// Restaurar enlaces de ejemplo
-links = [
-{ title: "GitHub", url: "https://github.com", thumbnail: "" },
-{ title: "LinkedIn", url: "https://linkedin.com", thumbnail: "" },
-{ title: "Twitter", url: "https://twitter.com", thumbnail: "" },
-{ title: "Mi Portfolio", url: "https://portafolio-ejemplo.netlify.app", thumbnail: "" },
-{ title: "Mi Blog Personal", url: "https://ejemplo-blog.com", thumbnail: "" }
-];
-
-// Limpiar localStorage
-localStorage.removeItem('linktreeLinks');
-
-// Renderizar enlaces
-renderLinks();
-}
-}
-
-// Event listeners
-addLinkBtn.addEventListener('click', addLink);
-
-generateThumbnailsBtn.addEventListener('click', generateThumbnails);
-
-resetLinksBtn.addEventListener('click', resetLinks);
-
-// Permitir agregar con Enter
-linkUrlInput.addEventListener('keypress', function(e) {
-if (e.key === 'Enter') {
-addLink();
-}
-});
-
-// Cargar enlaces al iniciar
-loadLinks();
-renderLinks();
-});
-</script>
+            // Mostrar/ocultar formulario e instrucciones con el botón invisible
+            toggleAdminBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                addLinkForm.classList.toggle('visible');
+                instructionsBox.classList.toggle('visible');
+            });
+            
+            // Event listeners
+            addLinkBtn.addEventListener('click', addLink);
+            generateThumbnailsBtn.addEventListener('click', generateThumbnails);
+            resetLinksBtn.addEventListener('click', resetLinks);
+            
+            linkUrlInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addLink();
+                }
+            });
+            
+            // Cargar enlaces al iniciar
+            loadLinks();
+            renderLinks();
+        });
+    </script>
 </body>
 </html>
