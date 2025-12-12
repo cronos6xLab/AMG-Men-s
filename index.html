@@ -346,6 +346,14 @@
             const instructionsBox = document.querySelector('.instructions');
             const toggleAdminBtn = document.getElementById('toggle-admin-btn');
             
+            // Enlaces iniciales de ejemplo
+            let links = [
+                { title: "GitHub", url: "https://github.com", thumbnail: "" },
+                { title: "LinkedIn", url: "https://linkedin.com", thumbnail: "" },
+                { title: "Twitter", url: "https://twitter.com", thumbnail: "" },
+                { title: "Mi Portfolio", url: "https://portafolio-ejemplo.netlify.app", thumbnail: "" },
+                { title: "Mi Blog Personal", url: "https://ejemplo-blog.com", thumbnail: "" }
+            ];
 
             // Guardar enlaces en localStorage
             function saveLinks() {
