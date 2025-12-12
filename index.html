@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Linktree Personalizado</title>
+    <title>AMG Menús</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -287,8 +287,8 @@
     <div class="container">
         <header>
             <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=500&q=80" alt="Foto de perfil" class="profile-img">
-            <h1>@tuusername</h1>
-            <p class="bio">Bienvenido a mi página de enlaces. Aquí encontrarás todos mis perfiles sociales, proyectos y contenido relevante.</p>
+            <h1>Menús AMG</h1>
+            <p class="bio">Creadores de algunas de las marcas más chingonas de México.</p>
         </header>
         
         <div class="add-link-form">
@@ -325,8 +325,8 @@
         </div>
         
         <footer>
-            <p>Página Linktree personalizada &copy; 2023 | Creada con HTML, CSS y JavaScript</p>
-            <p>Las miniaturas se generan mediante un servicio de captura de pantalla</p>
+            <p>AMG Hospitality Group</p>
+            <p>-</p>
         </footer>
     </div>
 
@@ -346,15 +346,7 @@
             const instructionsBox = document.querySelector('.instructions');
             const toggleAdminBtn = document.getElementById('toggle-admin-btn');
             
-            // Enlaces iniciales de ejemplo
-            let links = [
-                { title: "GitHub", url: "https://github.com", thumbnail: "" },
-                { title: "LinkedIn", url: "https://linkedin.com", thumbnail: "" },
-                { title: "Twitter", url: "https://twitter.com", thumbnail: "" },
-                { title: "Mi Portfolio", url: "https://portafolio-ejemplo.netlify.app", thumbnail: "" },
-                { title: "Mi Blog Personal", url: "https://ejemplo-blog.com", thumbnail: "" }
-            ];
-            
+
             // Guardar enlaces en localStorage
             function saveLinks() {
                 localStorage.setItem('linktreeLinks', JSON.stringify(links));
