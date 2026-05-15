@@ -1,508 +1,339 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AMG Menús</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --text-xs:   clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+            --text-sm:   clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+            --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+            --text-lg:   clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+            --text-xl:   clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+            --text-2xl:  clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+            --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;
+            --space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;
+            --space-12:3rem;--space-16:4rem;
+            --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.875rem;
+            --radius-xl:1.25rem;--radius-full:9999px;
+            --font-display:'Instrument Serif',Georgia,serif;
+            --font-body:'DM Sans','Helvetica Neue',sans-serif;
+            --transition:200ms cubic-bezier(0.16,1,0.3,1);
         }
-        
-        body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #333;
+        :root,[data-theme="dark"]{
+            --bg:#0e0d0c;--surface:#151413;--surface-2:#1a1917;--surface-3:#1f1e1c;
+            --border:oklch(0.85 0 0/.08);--border-hover:oklch(0.85 0 0/.18);
+            --text:#e8e5e0;--text-muted:#7a7874;--text-faint:#4a4845;
+            --accent:#c9a96e;--accent-hover:#dfc085;
+            --accent-dim:oklch(0.72 0.08 60/.15);
+            --shadow-card:0 2px 8px oklch(0 0 0/.35),0 0 0 1px oklch(0.85 0 0/.06);
+            --shadow-hover:0 8px 28px oklch(0 0 0/.5),0 0 0 1px oklch(0.85 0 0/.1);
         }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
+        [data-theme="light"]{
+            --bg:#f7f5f0;--surface:#ffffff;--surface-2:#f3f1ec;--surface-3:#ebe8e2;
+            --border:oklch(0.2 0 0/.1);--border-hover:oklch(0.2 0 0/.22);
+            --text:#1c1a17;--text-muted:#6b6560;--text-faint:#b0aca5;
+            --accent:#9c6f2e;--accent-hover:#7d580f;
+            --accent-dim:oklch(0.55 0.1 60/.1);
+            --shadow-card:0 2px 8px oklch(0.2 0 0/.08),0 0 0 1px oklch(0.2 0 0/.06);
+            --shadow-hover:0 8px 28px oklch(0.2 0 0/.14),0 0 0 1px oklch(0.2 0 0/.1);
         }
-        
-        header {
-            text-align: center;
-            padding: 30px 20px;
-            color: white;
-            margin-bottom: 30px;
-        }
-        
-        .profile-img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        
-        .bio {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.5;
-        }
-        
-        .linktree-container {
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            margin-bottom: 40px;
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;scroll-behavior:smooth}
+        body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);
+             color:var(--text);background:var(--bg);
+             transition:background var(--transition),color var(--transition)}
+        img{display:block;max-width:100%;height:auto}
+        button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
+        ::selection{background:var(--accent-dim);color:var(--text)}
+        :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:var(--radius-sm)}
+        @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+        a{text-decoration:none;color:inherit}
 
-            /* GRID 2 COLUMNAS */
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 20px;
-        }
-        
-        .link-item {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            background-color: white;
-            border-radius: 12px;
-            margin-bottom: 0;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border-left: 5px solid #6a11cb;
-        }
-        
-        .link-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            border-left-color: #2575fc;
-        }
-        
-        .link-thumbnail {
-            width: 100%;
-            height: 120px;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-        
-        .link-content {
-            padding: 10px 12px;
-            flex-grow: 1;
-        }
-        
-        .link-title {
-            font-weight: 600;
-            font-size: 1rem;
-            margin-bottom: 4px;
-            color: #333;
-        }
-        
-        .link-url {
-            color: #666;
-            font-size: 0.8rem;
-            word-break: break-all;
-        }
-        
-        .link-icon {
-            width: 100%;
-            text-align: right;
-            padding: 6px 10px;
-            font-size: 1.2rem;
-            color: #6a11cb;
-        }
-        
-        .add-link-form {
-            background-color: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .form-title {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: #333;
-            text-align: center;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #555;
-        }
-        
-        input[type="text"], input[type="url"] {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e1e1e1;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-        
-        input[type="text"]:focus, input[type="url"]:focus {
-            border-color: #6a11cb;
-            outline: none;
-        }
-        
-        .buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        button {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            flex: 1;
-        }
-        
-        .btn-add {
-            background-color: #6a11cb;
-            color: white;
-        }
-        
-        .btn-add:hover {
-            background-color: #5a0db3;
-        }
-        
-        .btn-generate {
-            background-color: #2575fc;
-            color: white;
-        }
-        
-        .btn-generate:hover {
-            background-color: #1c65e0;
-        }
-        
-        .btn-reset {
-            background-color: #f8f9fa;
-            color: #333;
-            border: 2px solid #e1e1e1;
-        }
-        
-        .btn-reset:hover {
-            background-color: #e9ecef;
-        }
-        
-        .instructions {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-        
-        .instructions h3 {
-            color: #6a11cb;
-            margin-bottom: 10px;
-        }
-        
-        .instructions ol {
-            padding-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-        }
-        
-        footer {
-            text-align: center;
-            color: white;
-            padding: 20px;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
+        .page{max-width:680px;margin:0 auto;padding:var(--space-8) var(--space-4) var(--space-16)}
 
-        /* Ocultar formulario + instrucciones por defecto */
-        .add-link-form,
-        .instructions {
-            display: none;
-        }
+        .topbar{display:flex;justify-content:flex-end;margin-bottom:var(--space-6)}
+        .theme-toggle{width:40px;height:40px;border-radius:var(--radius-full);
+            background:var(--surface-2);border:1px solid var(--border);
+            display:flex;align-items:center;justify-content:center;color:var(--text-muted);
+            transition:all var(--transition)}
+        .theme-toggle:hover{color:var(--text);background:var(--surface-3)}
+        .theme-toggle svg{width:16px;height:16px}
 
-        .add-link-form.visible,
-        .instructions.visible {
-            display: block;
-        }
+        header{display:flex;flex-direction:column;align-items:center;text-align:center;
+               padding:var(--space-4) 0 var(--space-10);gap:var(--space-5)}
 
-        /* Botón invisible al fondo para togglear admin */
-        #toggle-admin-btn {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 10px;
-            background: transparent;
-            border: none;
-            padding: 0;
-            margin: 0;
-            cursor: default;
-            outline: none;
+        .profile-ring{position:relative;width:96px;height:96px}
+        .profile-ring::before{content:'';position:absolute;inset:-3px;border-radius:50%;
+            background:conic-gradient(var(--accent) 0deg,var(--accent-dim) 120deg,transparent 160deg,var(--accent) 360deg);
+            animation:spin 8s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .profile-img{position:relative;z-index:1;width:96px;height:96px;border-radius:50%;
+                     object-fit:cover;border:3px solid var(--bg)}
+
+        .brand-tag{display:inline-flex;align-items:center;gap:var(--space-2);
+            background:var(--accent-dim);border:1px solid oklch(from var(--accent) l c h/.3);
+            color:var(--accent);font-size:var(--text-xs);font-weight:600;
+            letter-spacing:.08em;text-transform:uppercase;
+            padding:var(--space-1) var(--space-3);border-radius:var(--radius-full)}
+        .brand-tag::before{content:'';width:6px;height:6px;border-radius:50%;
+            background:var(--accent);animation:pulse 2s ease infinite}
+        @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+
+        h1{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:400;
+           font-style:italic;letter-spacing:-.02em;color:var(--text);line-height:1.1}
+        .bio{font-size:var(--text-sm);color:var(--text-muted);max-width:36ch;line-height:1.6}
+
+        .section-label{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-5)}
+        .section-label span{font-size:var(--text-xs);font-weight:600;letter-spacing:.1em;
+            text-transform:uppercase;color:var(--text-faint)}
+        .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+        .brands-grid{display:flex;flex-direction:column;gap:var(--space-4);margin-bottom:var(--space-8)}
+
+        .brand-pair{background:var(--surface);border:1px solid var(--border);
+            border-radius:var(--radius-xl);overflow:hidden;
+            transition:border-color var(--transition),box-shadow var(--transition);
+            box-shadow:var(--shadow-card)}
+        .brand-pair:hover{border-color:var(--border-hover);box-shadow:var(--shadow-hover)}
+
+        .brand-header{display:grid;grid-template-columns:80px 1fr;align-items:center;
+                      border-bottom:1px solid var(--border)}
+        .brand-thumb{width:80px;height:80px;object-fit:cover;flex-shrink:0}
+        .brand-meta{padding:var(--space-4) var(--space-5)}
+        .brand-name{font-family:var(--font-display);font-size:var(--text-lg);font-weight:400;
+                    color:var(--text);line-height:1.2}
+        .brand-category{font-size:var(--text-xs);color:var(--text-faint);margin-top:var(--space-1);
+                        text-transform:uppercase;letter-spacing:.06em}
+
+        .brand-actions{display:grid;grid-template-columns:1fr 1fr}
+        .action-btn{display:flex;align-items:center;justify-content:center;gap:var(--space-2);
+            padding:var(--space-4) var(--space-5);font-size:var(--text-sm);font-weight:500;
+            color:var(--text-muted);transition:all var(--transition)}
+        .action-btn:first-child{border-right:1px solid var(--border)}
+        .action-btn:hover{background:var(--surface-2);color:var(--text)}
+        .action-btn.primary:hover{background:var(--accent-dim);color:var(--accent)}
+        .action-btn i{font-size:.9em}
+        .action-btn .btn-label{font-size:var(--text-xs)}
+
+        footer{text-align:center;padding-top:var(--space-8)}
+        .footer-logo{font-family:var(--font-display);font-style:italic;font-size:var(--text-base);color:var(--text-faint);margin-bottom:var(--space-2)}
+        .footer-divider{width:32px;height:1px;background:var(--border);margin:var(--space-3) auto}
+        .footer-sub{font-size:var(--text-xs);color:var(--text-faint);letter-spacing:.05em}
+
+        .admin-panel{display:none;background:var(--surface);border:1px solid var(--border);
+            border-radius:var(--radius-xl);padding:var(--space-6);margin-bottom:var(--space-8);
+            box-shadow:var(--shadow-card)}
+        .admin-panel.visible{display:block}
+        .admin-title{font-size:var(--text-sm);font-weight:600;color:var(--text);
+            margin-bottom:var(--space-5);display:flex;align-items:center;gap:var(--space-2)}
+        .admin-title i{color:var(--accent)}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);margin-bottom:var(--space-3)}
+        @media(max-width:500px){.form-row{grid-template-columns:1fr}}
+        .form-group{display:flex;flex-direction:column;gap:var(--space-1)}
+        label{font-size:var(--text-xs);font-weight:600;color:var(--text-muted);
+              letter-spacing:.05em;text-transform:uppercase}
+        input[type="text"],input[type="url"]{padding:var(--space-3) var(--space-4);
+            background:var(--surface-2);border:1px solid var(--border);
+            border-radius:var(--radius-md);font-size:var(--text-sm);color:var(--text);
+            transition:border-color var(--transition),box-shadow var(--transition)}
+        input[type="text"]:focus,input[type="url"]:focus{
+            border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);outline:none}
+        input::placeholder{color:var(--text-faint)}
+        .admin-actions{display:flex;gap:var(--space-2);margin-top:var(--space-4)}
+        .btn{padding:var(--space-2) var(--space-4);border-radius:var(--radius-md);
+             font-size:var(--text-sm);font-weight:600;transition:all var(--transition);
+             border:1px solid transparent}
+        .btn-primary{background:var(--accent);color:#0e0d0c}
+        .btn-primary:hover{background:var(--accent-hover)}
+        .btn-ghost{background:transparent;border-color:var(--border);color:var(--text-muted)}
+        .btn-ghost:hover{background:var(--surface-2);color:var(--text)}
+
+        #toggle-admin-btn{position:fixed;bottom:0;left:0;width:100%;height:12px;
+            background:transparent;border:none;cursor:default;outline:none}
+
+        .brand-pair{opacity:1}
+        @supports(animation-timeline:scroll()){
+            .brand-pair{opacity:0;animation:reveal-fade linear both;
+                animation-timeline:view();animation-range:entry 0% entry 60%}
+        }
+        @keyframes reveal-fade{to{opacity:1}}
+
+        @media(max-width:480px){
+            .brand-header{grid-template-columns:64px 1fr}
+            .brand-thumb{width:64px;height:64px}
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="page">
+        <div class="topbar">
+            <button class="theme-toggle" data-theme-toggle aria-label="Cambiar tema">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+        </div>
+
         <header>
-            <img src="https://i.postimg.cc/zvtDYFCR/Photoroom-20251211-235942.jpg" alt="Foto de perfil" class="profile-img">
+            <div class="profile-ring">
+                <img src="https://i.postimg.cc/zvtDYFCR/Photoroom-20251211-235942.jpg"
+                     alt="AMG Hospitality Group" class="profile-img"
+                     width="96" height="96">
+            </div>
+            <div class="brand-tag">AMG Hospitality Group</div>
             <h1>Menús AMG</h1>
             <p class="bio">Creadores de algunas de las marcas más chingonas de México.</p>
         </header>
-        
-        <div class="add-link-form">
-            <h2 class="form-title">Agregar Nuevo Enlace</h2>
-            <div class="form-group">
-                <label for="link-title">Título del Enlace</label>
-                <input type="text" id="link-title" placeholder="Ej: Mi Instagram" value="Mi Instagram">
+
+        <div class="admin-panel" id="admin-panel">
+            <div class="admin-title"><i class="fas fa-sliders"></i> Agregar Enlace</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="link-title">Título</label>
+                    <input type="text" id="link-title" placeholder="Nombre de la marca" value="">
+                </div>
+                <div class="form-group">
+                    <label for="link-url">URL del menú</label>
+                    <input type="url" id="link-url" placeholder="https://..." value="">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="link-url">URL</label>
-                <input type="url" id="link-url" placeholder="https://ejemplo.com" value="https://instagram.com">
-            </div>
-            <div class="buttons">
-                <button class="btn-add" id="add-link-btn"><i class="fas fa-plus-circle"></i> Agregar Enlace</button>
-                <button class="btn-generate" id="generate-thumbnails-btn"><i class="fas fa-image"></i> Generar Miniaturas</button>
-                <button class="btn-reset" id="reset-links-btn"><i class="fas fa-redo"></i> Reiniciar</button>
+            <div class="admin-actions">
+                <button class="btn btn-primary" id="add-link-btn">
+                    <i class="fas fa-plus"></i> Agregar
+                </button>
+                <button class="btn btn-ghost" id="reset-links-btn">
+                    <i class="fas fa-redo"></i> Reiniciar
+                </button>
             </div>
         </div>
-        
-        <div class="linktree-container" id="links-container">
-            <!-- Los enlaces se agregarán aquí dinámicamente -->
-        </div>
-        
-        <div class="instructions">
-            <h3>Instrucciones para usar esta página Linktree:</h3>
-            <ol>
-                <li>Agrega un título y la URL de tu enlace en el formulario superior.</li>
-                <li>Haz clic en "Agregar Enlace" para añadirlo a tu lista.</li>
-                <li>Una vez que tengas todos tus enlaces, haz clic en "Generar Miniaturas" para obtener imágenes de vista previa de cada sitio.</li>
-                <li>Haz clic en cualquier enlace para abrirlo en una nueva pestaña.</li>
-                <li>Para personalizar la página, edita el archivo HTML directamente en GitHub.</li>
-                <li>Para cambiar la imagen de perfil, actualiza la URL en la etiqueta img con class="profile-img".</li>
-            </ol>
-        </div>
-        
+
+        <div class="section-label"><span>Nuestras marcas</span></div>
+
+        <div class="brands-grid" id="brands-container"></div>
+
         <footer>
-            <p>AMG Hospitality Group</p>
-            <p>-</p>
+            <div class="footer-logo">AMG</div>
+            <div class="footer-divider"></div>
+            <div class="footer-sub">Hospitality Group &middot; México</div>
         </footer>
     </div>
 
-    <!-- Botón invisible para mostrar/ocultar formulario e instrucciones -->
-    <button id="toggle-admin-btn" aria-label="Alternar panel de edición"></button>
+    <button id="toggle-admin-btn" aria-label="Panel admin"></button>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const linksContainer = document.getElementById('links-container');
-            const addLinkBtn = document.getElementById('add-link-btn');
-            const generateThumbnailsBtn = document.getElementById('generate-thumbnails-btn');
-            const resetLinksBtn = document.getElementById('reset-links-btn');
-            const linkTitleInput = document.getElementById('link-title');
-            const linkUrlInput = document.getElementById('link-url');
+    (function(){
+        const html = document.documentElement;
+        const themeBtn = document.querySelector('[data-theme-toggle]');
+        let theme = 'dark';
+        html.setAttribute('data-theme', theme);
 
-            const addLinkForm = document.querySelector('.add-link-form');
-            const instructionsBox = document.querySelector('.instructions');
-            const toggleAdminBtn = document.getElementById('toggle-admin-btn');
-            
-            let links = [
-              { title: "Chubbies Burger", url: "http://pide.chubbiesburger.mx/", thumbnail: "https://i.postimg.cc/zDt9P1cF/IMG-4348.webp" },
-              { title: "Insta Chubbies", url: "https://www.instagram.com/chubbies_burger?igsh=bnZlODF4a2txMWl4", thumbnail: "https://i.postimg.cc/yYHzQ50c/IMG-4341.jpg" }, 
-              { title: "Muy Gallito",      url: "https://order.foodbot.ai/muygallito/", thumbnail: "https://i.postimg.cc/JndPKRzz/IMG-4351.webp" },
-              { title: "Insta Muy Gallito", url: "https://www.instagram.com/muygallitomx?igsh=ZDczbHZtM2IxOG1w", thumbnail: "https://i.postimg.cc/bYV575Xv/IMG-4342.jpg" },  
-              { title: "FatBastard",       url: "https://order.foodbot.ai/fatbastard/", thumbnail: "https://i.postimg.cc/TwyHzKSp/IMG-4350.webp" },
-              { title: "Insta FatBastard", url: "https://www.instagram.com/eatfatbastard?igsh=MTNqejNtaWkzdmVwdg==", thumbnail: "https://i.postimg.cc/7L3mssDx/IMG-4345.jpg" },  
-              { title: "BrassMonkey",      url: "https://order.foodbot.ai/brassmonkey/", thumbnail: "https://i.postimg.cc/J4QKd30C/IMG-4349.webp" },
-              { title: "Insta BrassMonkey", url: "https://www.instagram.com/brassmonkeypizza?igsh=dXZtOXA0cWQ3ajg2", thumbnail: "https://i.postimg.cc/NfhnGHM2/IMG-4343.jpg" },  
-              { title: "TiinThai",         url: "https://order.foodbot.ai/tiinthai/", thumbnail: "https://i.postimg.cc/mDxQrhky/IMG-4352.webp" },
-              { title: "Insta TiinThai", url: "https://www.instagram.com/tiinthai?igsh=MWF4dXEzd3E0bG92", thumbnail: "https://i.postimg.cc/wBbWCtPP/IMG-4338.jpg" },  
-              { title: "Palermo",          url: "https://order.foodbot.ai/palermo/", thumbnail: "https://i.postimg.cc/Z54DpzpQ/IMG-4339.jpg" },
-              { title: "Insta Palermo", url: "https://www.instagram.com/palermoempanadasmx?igsh=MWFnMXdpNnRkY3lwdA==", thumbnail: "https://i.postimg.cc/Z54DpzpQ/IMG-4339.jpg" }  
-            ];
-
-            function saveLinks() {
-                localStorage.setItem('linktreeLinks', JSON.stringify(links));
-            }
-            
-            function loadLinks() {
-                const savedLinks = localStorage.getItem('linktreeLinks');
-                if (savedLinks) {
-                    links = JSON.parse(savedLinks);
-                }
-            }
-            
-            function renderLinks() {
-                linksContainer.innerHTML = '';
-                
-                links.forEach((link, index) => {
-                    const linkElement = document.createElement('div');
-                    linkElement.className = 'link-item';
-                    linkElement.setAttribute('data-index', index);
-                    
-                    let iconClass = 'fas fa-link';
-                    const url = link.url.toLowerCase();
-                    
-                    if (url.includes('github')) iconClass = 'fab fa-github';
-                    else if (url.includes('linkedin')) iconClass = 'fab fa-linkedin';
-                    else if (url.includes('twitter') || url.includes('x.com')) iconClass = 'fab fa-twitter';
-                    else if (url.includes('instagram')) iconClass = 'fab fa-instagram';
-                    else if (url.includes('youtube')) iconClass = 'fab fa-youtube';
-                    else if (url.includes('facebook')) iconClass = 'fab fa-facebook';
-                    else if (url.includes('tiktok')) iconClass = 'fab fa-tiktok';
-                    else if (url.includes('discord')) iconClass = 'fab fa-discord';
-                    else if (url.includes('whatsapp')) iconClass = 'fab fa-whatsapp';
-                    else if (url.includes('spotify')) iconClass = 'fab fa-spotify';
-                    
-                    const thumbnailUrl = link.thumbnail || `https://via.placeholder.com/100/6a11cb/ffffff?text=${encodeURIComponent(link.title.substring(0, 10))}`;
-                    
-                    linkElement.innerHTML = `
-                        <img src="${thumbnailUrl}" alt="${link.title}" class="link-thumbnail">
-                        <div class="link-content">
-                            <div class="link-title">${link.title}</div>
-                            <div class="link-url">${link.url}</div>
-                        </div>
-                        <div class="link-icon">
-                            <i class="${iconClass}"></i>
-                        </div>
-                    `;
-                    
-                    linkElement.addEventListener('click', function() {
-                        window.open(link.url, '_blank');
-                    });
-                    
-                    linksContainer.appendChild(linkElement);
-                });
-            }
-            
-            function addLink() {
-                const title = linkTitleInput.value.trim();
-                const url = linkUrlInput.value.trim();
-                
-                if (!title || !url) {
-                    alert('Por favor, completa ambos campos');
-                    return;
-                }
-                
-                try {
-                    new URL(url);
-                } catch (e) {
-                    alert('Por favor, ingresa una URL válida');
-                    return;
-                }
-                
-                links.push({ title, url, thumbnail: "" });
-                saveLinks();
-                renderLinks();
-                linkUrlInput.value = '';
-            }
-            
-            async function generateThumbnails() {
-                if (links.length === 0) {
-                    alert('No hay enlaces para generar miniaturas');
-                    return;
-                }
-                
-                alert('Generando miniaturas... Esto puede tomar unos segundos. En producción, usa tu propia API/backend.');
-                
-                const apiKey = 'demo';
-                
-                for (let i = 0; i < links.length; i++) {
-                    const link = links[i];
-                    
-                    if (!link.thumbnail || link.thumbnail.includes('placeholder')) {
-                        const screenshotUrl = `https://api.screenshotapi.net/screenshot?url=${encodeURIComponent(link.url)}&apiKey=${apiKey}&fullPage=false`;
-                        
-                        try {
-                            await new Promise(resolve => setTimeout(resolve, 300));
-                            
-                            let thumbnail = '';
-                            const domain = new URL(link.url).hostname;
-                            
-                            if (domain.includes('github')) {
-                                thumbnail = 'https://raw.githubusercontent.com/github/explore/78df643247d429f6cc873026c0622819ad797942/topics/github/github.png';
-                            } else if (domain.includes('linkedin')) {
-                                thumbnail = 'https://cdn-icons-png.flaticon.com/512/174/174857.png';
-                            } else if (domain.includes('twitter') || domain.includes('x.com')) {
-                                thumbnail = 'https://cdn-icons-png.flaticon.com/512/733/733579.png';
-                            } else {
-                                const domainName = domain.replace('www.', '').split('.')[0];
-                                thumbnail = `https://via.placeholder.com/100/2575fc/ffffff?text=${encodeURIComponent(domainName.substring(0, 15))}`;
-                            }
-                            
-                            link.thumbnail = thumbnail;
-                            links[i] = link;
-                            renderLinks();
-                            
-                        } catch (error) {
-                            console.error('Error generando miniatura:', error);
-                            link.thumbnail = `https://via.placeholder.com/100/cccccc/333333?text=Error`;
-                            links[i] = link;
-                            renderLinks();
-                        }
-                    }
-                }
-                
-                saveLinks();
-                alert('Miniaturas generadas (simuladas). Para producción, implementa un backend propio.');
-            }
-            
-            function resetLinks() {
-                if (confirm('¿Estás seguro de que quieres eliminar todos los enlaces y restaurar los ejemplos?')) {
-                    links = [
-                        { title: "Chubbies Burger", url: "http://pide.chubbiesburger.mx/", thumbnail: "https://i.postimg.cc/yYHzQ50c/IMG-4341.jpg" },
-                        { title: "Muy Gallito",      url: "https://order.foodbot.ai/muygallito/", thumbnail: "https://i.postimg.cc/bYV575Xv/IMG-4342.jpg" },
-                        { title: "FatBastard",       url: "https://order.foodbot.ai/fatbastard/", thumbnail: "https://i.postimg.cc/qM95RCvp/IMG-4336.jpg" },
-                        { title: "BrassMonkey",      url: "https://order.foodbot.ai/brassmonkey/", thumbnail: "https://i.postimg.cc/NfhnGHM2/IMG-4343.jpg" },
-                        { title: "TiinThai",         url: "https://order.foodbot.ai/tiinthai/", thumbnail: "https://i.postimg.cc/wBbWCtPP/IMG-4338.jpg" },
-                        { title: "Palermo",          url: "https://order.foodbot.ai/palermo/", thumbnail: "https://i.postimg.cc/Z54DpzpQ/IMG-4339.jpg" }
-                    ];
-                    
-                    localStorage.removeItem('linktreeLinks');
-                    renderLinks();
-                }
-            }
-
-            toggleAdminBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                addLinkForm.classList.toggle('visible');
-                instructionsBox.classList.toggle('visible');
-            });
-            
-            addLinkBtn.addEventListener('click', addLink);
-            generateThumbnailsBtn.addEventListener('click', generateThumbnails);
-            resetLinksBtn.addEventListener('click', resetLinks);
-            
-            linkUrlInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    addLink();
-                }
-            });
-            
-            loadLinks();
-            renderLinks();
+        function setIcon(){
+            themeBtn.innerHTML = theme === 'dark'
+                ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+                : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+        }
+        themeBtn.addEventListener('click',()=>{
+            theme = theme==='dark'?'light':'dark';
+            html.setAttribute('data-theme',theme);
+            setIcon();
         });
+        setIcon();
+
+        const DEFAULT = [
+            {name:"Chubbies Burger",category:"Burgers · Fast Casual",
+             menuUrl:"http://pide.chubbiesburger.mx/",
+             instaUrl:"https://www.instagram.com/chubbies_burger?igsh=bnZlODF4a2txMWl4",
+             thumb:"https://i.postimg.cc/zDt9P1cF/IMG-4348.webp",handle:"@chubbies_burger"},
+            {name:"Muy Gallito",category:"Pollo · Street Food",
+             menuUrl:"https://order.foodbot.ai/muygallito/",
+             instaUrl:"https://www.instagram.com/muygallitomx?igsh=ZDczbHZtM2IxOG1w",
+             thumb:"https://i.postimg.cc/JndPKRzz/IMG-4351.webp",handle:"@muygallitomx"},
+            {name:"FatBastard",category:"Comfort Food · Clásicos",
+             menuUrl:"https://order.foodbot.ai/fatbastard/",
+             instaUrl:"https://www.instagram.com/eatfatbastard?igsh=MTNqejNtaWkzdmVwdg==",
+             thumb:"https://i.postimg.cc/TwyHzKSp/IMG-4350.webp",handle:"@eatfatbastard"},
+            {name:"BrassMonkey",category:"Pizza · Artesanal",
+             menuUrl:"https://order.foodbot.ai/brassmonkey/",
+             instaUrl:"https://www.instagram.com/brassmonkeypizza?igsh=dXZtOXA0cWQ3ajg2",
+             thumb:"https://i.postimg.cc/J4QKd30C/IMG-4349.webp",handle:"@brassmonkeypizza"},
+            {name:"TiinThai",category:"Thai · Fusión Asiática",
+             menuUrl:"https://order.foodbot.ai/tiinthai/",
+             instaUrl:"https://www.instagram.com/tiinthai?igsh=MWF4dXEzd3E0bG92",
+             thumb:"https://i.postimg.cc/mDxQrhky/IMG-4352.webp",handle:"@tiinthai"},
+            {name:"Palermo",category:"Empanadas · Argentino",
+             menuUrl:"https://order.foodbot.ai/palermo/",
+             instaUrl:"https://www.instagram.com/palermoempanadasmx?igsh=MWFnMXdpNnRkY3lwdA==",
+             thumb:"https://i.postimg.cc/Z54DpzpQ/IMG-4339.jpg",handle:"@palermoempanadasmx"}
+        ];
+
+        let brands = JSON.parse(JSON.stringify(DEFAULT));
+        const container = document.getElementById('brands-container');
+
+        function render(){
+            container.innerHTML='';
+            brands.forEach(b=>{
+                const c=document.createElement('div');
+                c.className='brand-pair';
+                const thumbHtml = b.thumb
+                    ? `<img src="${b.thumb}" alt="${b.name}" class="brand-thumb" width="80" height="80" loading="lazy" decoding="async">`
+                    : `<div class="brand-thumb" style="background:var(--surface-3);display:flex;align-items:center;justify-content:center;color:var(--text-faint);font-size:1.5rem"><i class="fas fa-utensils"></i></div>`;
+                c.innerHTML=`
+                    <div class="brand-header">
+                        ${thumbHtml}
+                        <div class="brand-meta">
+                            <div class="brand-name">${b.name}</div>
+                            <div class="brand-category">${b.category||''}</div>
+                        </div>
+                    </div>
+                    <div class="brand-actions">
+                        <a href="${b.menuUrl}" target="_blank" rel="noopener noreferrer"
+                           class="action-btn primary" aria-label="Ver menú de ${b.name}">
+                            <i class="fas fa-utensils"></i>
+                            <span class="btn-label">Ver menú</span>
+                        </a>
+                        <a href="${b.instaUrl||b.menuUrl}" target="_blank" rel="noopener noreferrer"
+                           class="action-btn" aria-label="Instagram de ${b.name}">
+                            <i class="fab fa-instagram"></i>
+                            <span class="btn-label">${b.handle||'Instagram'}</span>
+                        </a>
+                    </div>`;
+                container.appendChild(c);
+            });
+        }
+
+        const adminPanel=document.getElementById('admin-panel');
+        document.getElementById('toggle-admin-btn').addEventListener('click',e=>{
+            e.stopPropagation();
+            adminPanel.classList.toggle('visible');
+        });
+        document.getElementById('add-link-btn').addEventListener('click',()=>{
+            const name=document.getElementById('link-title').value.trim();
+            const url=document.getElementById('link-url').value.trim();
+            if(!name||!url){alert('Completa título y URL');return}
+            try{new URL(url)}catch{alert('URL no válida');return}
+            brands.push({name,category:'',menuUrl:url,instaUrl:url,thumb:'',handle:''});
+            render();
+            document.getElementById('link-title').value='';
+            document.getElementById('link-url').value='';
+        });
+        document.getElementById('reset-links-btn').addEventListener('click',()=>{
+            if(confirm('¿Restaurar marcas originales?')){
+                brands=JSON.parse(JSON.stringify(DEFAULT));
+                render();
+            }
+        });
+        document.getElementById('link-url').addEventListener('keypress',e=>{
+            if(e.key==='Enter') document.getElementById('add-link-btn').click();
+        });
+
+        render();
+    })();
     </script>
 </body>
 </html>
