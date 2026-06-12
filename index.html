@@ -2,7 +2,7 @@
 <html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>AMG Menús · Delivery Apps</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,6 @@
             --text-sm:   clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
             --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
             --text-lg:   clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
-            --text-xl:   clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
             --text-2xl:  clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
             --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;
             --space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;
@@ -92,7 +91,9 @@
         .brand-pair:hover{border-color:var(--border-hover);box-shadow:var(--shadow-hover)}
         .brand-header{display:grid;grid-template-columns:80px 1fr;align-items:center;
                       border-bottom:1px solid var(--border)}
-        .brand-thumb{width:80px;height:80px;object-fit:cover;flex-shrink:0}
+        /* fix para imágenes completas, sin recorte */
+        .brand-thumb{width:80px;height:80px;object-fit:contain;background:var(--surface-2);
+                     padding:6px;flex-shrink:0;transition:transform var(--transition);}
         .brand-meta{padding:var(--space-4) var(--space-5)}
         .brand-name{font-family:var(--font-display);font-size:var(--text-lg);font-weight:400;
                     color:var(--text);line-height:1.2}
@@ -101,7 +102,7 @@
         .brand-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
         .action-btn{display:flex;align-items:center;justify-content:center;gap:var(--space-2);
             padding:var(--space-3) var(--space-2);font-size:var(--text-sm);font-weight:500;
-            color:var(--text-muted);transition:all var(--transition);text-align:center;}
+            color:var(--text-muted);transition:all var(--transition);text-align:center; cursor:pointer;}
         .action-btn:not(:last-child){border-right:1px solid var(--border);}
         .action-btn:hover{background:var(--surface-2);color:var(--text)}
         .action-btn.primary:hover{background:var(--accent-dim);color:var(--accent)}
@@ -137,7 +138,7 @@
             transition:all var(--transition);}
         .modal-overlay.active{opacity:1;visibility:visible;}
         .modal-container{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);
-            max-width:520px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-hover);
+            max-width:540px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-hover);
             transform:scale(0.96);transition:transform var(--transition);}
         .modal-overlay.active .modal-container{transform:scale(1);}
         .modal-header{display:flex;justify-content:space-between;align-items:center;padding:var(--space-5) var(--space-6);
@@ -156,11 +157,9 @@
             transition:background var(--transition);}
         .app-link-item a{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);font-size:var(--text-sm);}
         .app-link-item .branch{font-weight:500;color:var(--text);}
-        .app-link-item .url-trunc{font-size:var(--text-xs);color:var(--text-muted);font-family:monospace;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .app-link-item .url-trunc{font-size:var(--text-xs);color:var(--text-muted);font-family:monospace;}
         .app-link-item:hover{background:var(--surface-3);}
         .empty-message{color:var(--text-faint);font-size:var(--text-sm);font-style:italic;padding:var(--space-2) 0;}
-        hr{margin:var(--space-4) 0;border-color:var(--border);}
-        @keyframes reveal-fade{to{opacity:1}}
     </style>
 </head>
 <body>
@@ -212,22 +211,20 @@
 </div>
 <button id="toggle-admin-btn" aria-label="Panel admin"></button>
 
-<!-- MODAL para Apps (Rappi / Uber / Didi) -->
+<!-- MODAL para Apps (primero Uber, luego Rappi, luego Didi) -->
 <div id="deliveryModal" class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header">
             <h3 id="modalBrandTitle">Delivery Apps</h3>
             <button class="modal-close" id="closeModalBtn"><i class="fas fa-times"></i></button>
         </div>
-        <div class="modal-body" id="modalBodyContent">
-            <!-- dinámico -->
-        </div>
+        <div class="modal-body" id="modalBodyContent"></div>
     </div>
 </div>
 
 <script>
     (function(){
-        // ---------- TEMA OSCURO/CLARO ----------
+        // ----- TEMA -----
         const html = document.documentElement;
         const themeBtn = document.querySelector('[data-theme-toggle]');
         let theme = 'dark';
@@ -244,26 +241,9 @@
         });
         setIcon();
 
-        // ---------- DATOS DE APPS DESDE XLSX (Rappi, Uber Eats, Didi - sin Didi en archivo) ----------
+        // ----- DATOS DE APPS (archivo XLSX) -----
         const deliveryData = {
             "Chubbies Burger": {
-                 uber: [
-                    {branch:"iztacalco", url:"https://www.ubereats.com/mx-en/store/chubbies-burger-iztacalco/wJLiUZlcXzySciSvG7XSDw?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                    {branch:"la mex", url:"https://www.ubereats.com/mx/store/chubbies-burger-la-mexicana/QOMg5IDoWVmPSFQVYm6hTg?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                    {branch:"polanco", url:"https://www.ubereats.com/mx/store/chubbies-burger-polanco/TZ2_ZptVVseYsh_VFMc6Wg?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                    {branch:"lindavista", url:"https://www.ubereats.com/mx/store/chubbies-burger-lindavista/b4JtnM7dXk-RnAuRLv7-sw?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                    {branch:"roma", url:"https://www.ubereats.com/mx-en/store/chubbies-burger-roma/NujF1PFGXq6N-LN6hMaRtQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                    {branch:"interlomas", url:"https://www.ubereats.com/mx/store/chubbies-burger-paseo-interlomas/gbdj_of-VB-ahwJTEY_UaA?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                    {branch:"coapa", url:"https://www.ubereats.com/mx/store/chubbies-burger-acoxpa/HS8l0lJgVn-UG8-npykjyQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                    {branch:"sta fe", url:"https://www.ubereats.com/mx/store/chubbies-burger-santa-fe/NoI4uztNU3CovEGONC6VLQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                    {branch:"San Ángel", url:"https://www.ubereats.com/mx/store/chubbies-burger-san-angel/axCuLZdAXaOp_QYPCNNUTA?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                    {branch:"sur", url:"https://www.ubereats.com/mx/store/chubbies-burger-sur/oWjuu1NOUj2I9regzSXEMg?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                    {branch:"claveria", url:"https://www.ubereats.com/mx/store/chubbies-burger-claveria/iJZgFiHgVxmDPVXIoznibQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                    {branch:"satelite", url:"https://www.ubereats.com/mx/store/chubbies-burger-satelite/9bjZuQftVc6b43Nl3QVrnQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                    {branch:"coyoacan", url:"https://www.ubereats.com/mx/store/chubbies-burger-claveria/iJZgFiHgVxmDPVXIoznibQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                    {branch:"herradura", url:"https://www.ubereats.com/mx/store/chubbies-la-herradura/avbBdvtiWaWceFu7arIz1w?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"}
-                ]
-            },
                 rappi: [
                     {branch:"iztacalco", url:"https://www.rappi.com.mx/restaurantes/1930158071-chubbies-burger"},
                     {branch:"la mex", url:"https://www.rappi.com.mx/restaurantes/1930254602-chubbies-burger"},
@@ -281,20 +261,36 @@
                     {branch:"aeropuerto", url:"https://www.rappi.com.mx/restaurantes/1930334194-chubbies-burger"},
                     {branch:"herradura", url:"https://www.rappi.com.mx/restaurantes/1930158073-chubbies-burger"}
                 ],
+                uber: [
+                    {branch:"iztacalco", url:"https://www.ubereats.com/mx-en/store/chubbies-burger-iztacalco/wJLiUZlcXzySciSvG7XSDw?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                    {branch:"la mex", url:"https://www.ubereats.com/mx/store/chubbies-burger-la-mexicana/QOMg5IDoWVmPSFQVYm6hTg?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                    {branch:"polanco", url:"https://www.ubereats.com/mx/store/chubbies-burger-polanco/TZ2_ZptVVseYsh_VFMc6Wg?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                    {branch:"lindavista", url:"https://www.ubereats.com/mx/store/chubbies-burger-lindavista/b4JtnM7dXk-RnAuRLv7-sw?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                    {branch:"roma", url:"https://www.ubereats.com/mx-en/store/chubbies-burger-roma/NujF1PFGXq6N-LN6hMaRtQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                    {branch:"interlomas", url:"https://www.ubereats.com/mx/store/chubbies-burger-paseo-interlomas/gbdj_of-VB-ahwJTEY_UaA?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                    {branch:"coapa", url:"https://www.ubereats.com/mx/store/chubbies-burger-acoxpa/HS8l0lJgVn-UG8-npykjyQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                    {branch:"sta fe", url:"https://www.ubereats.com/mx/store/chubbies-burger-santa-fe/NoI4uztNU3CovEGONC6VLQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                    {branch:"San Ángel", url:"https://www.ubereats.com/mx/store/chubbies-burger-san-angel/axCuLZdAXaOp_QYPCNNUTA?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                    {branch:"sur", url:"https://www.ubereats.com/mx/store/chubbies-burger-sur/oWjuu1NOUj2I9regzSXEMg?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                    {branch:"claveria", url:"https://www.ubereats.com/mx/store/chubbies-burger-claveria/iJZgFiHgVxmDPVXIoznibQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                    {branch:"satelite", url:"https://www.ubereats.com/mx/store/chubbies-burger-satelite/9bjZuQftVc6b43Nl3QVrnQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                    {branch:"coyoacan", url:"https://www.ubereats.com/mx/store/chubbies-burger-claveria/iJZgFiHgVxmDPVXIoznibQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                    {branch:"herradura", url:"https://www.ubereats.com/mx/store/chubbies-la-herradura/avbBdvtiWaWceFu7arIz1w?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"}
+                ]
             },
             "Muy Gallito": { rappi: [], uber: [
-                {branch:"iztacalco",url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-iztacalco/TzXDT89gX0-4LWM3Q5Yk7A?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                {branch:"polanco",url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-polanco/PuLJkHWUVBCQXGTh66JZOw?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                {branch:"lindavista",url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-lindavista/e003iLaHWLivt3ggZc97MA?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                {branch:"roma",url:"https://www.ubereats.com/mx/store/muy-gallito-roma/opq4DxOvUy-7h4zGiiRqvA?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                {branch:"Acoxpa",url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-acoxpa/oW_WJpQHXCan4uXU_3GVYQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                {branch:"sta fe",url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-santa-fe/7LSESRvuV7Wip-_PU1O24g?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                {branch:"San Ángel",url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-san-angel/-Na4kFD_VgOM-IAcieDE9w?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                {branch:"sur",url:"https://www.ubereats.com/mx/store/muy-gallito-sur/TJ7rsbVjUeWqEclrxV0BPw?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                {branch:"claveria",url:"https://www.ubereats.com/mx/store/muy-gallito-claveria/Vs60M-n8XiG0YG3vtHvYEA?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                {branch:"satelite",url:"https://www.ubereats.com/mx/store/muy-gallito-satelite/arl7fOYkXjG-3NdLRoF5Qg?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                {branch:"coyoacan",url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-coyoacan/6snBGZgDXKqGjUISC-FwXg?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
-                {branch:"herradura",url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-herradura/w1EQ2UcKUhq2FwbZpxs0ww?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"}
+                {branch:"iztacalco", url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-iztacalco/TzXDT89gX0-4LWM3Q5Yk7A?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                {branch:"polanco", url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-polanco/PuLJkHWUVBCQXGTh66JZOw?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                {branch:"lindavista", url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-lindavista/e003iLaHWLivt3ggZc97MA?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                {branch:"roma", url:"https://www.ubereats.com/mx/store/muy-gallito-roma/opq4DxOvUy-7h4zGiiRqvA?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                {branch:"Acoxpa", url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-acoxpa/oW_WJpQHXCan4uXU_3GVYQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                {branch:"sta fe", url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-santa-fe/7LSESRvuV7Wip-_PU1O24g?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                {branch:"San Ángel", url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-san-angel/-Na4kFD_VgOM-IAcieDE9w?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                {branch:"sur", url:"https://www.ubereats.com/mx/store/muy-gallito-sur/TJ7rsbVjUeWqEclrxV0BPw?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                {branch:"claveria", url:"https://www.ubereats.com/mx/store/muy-gallito-claveria/Vs60M-n8XiG0YG3vtHvYEA?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                {branch:"satelite", url:"https://www.ubereats.com/mx/store/muy-gallito-satelite/arl7fOYkXjG-3NdLRoF5Qg?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                {branch:"coyoacan", url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-coyoacan/6snBGZgDXKqGjUISC-FwXg?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"},
+                {branch:"herradura", url:"https://www.ubereats.com/mx/store/muy-gallito-fried-chicken-herradura/w1EQ2UcKUhq2FwbZpxs0ww?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"}
             ]},
             "Fat Bastard": { rappi: [{branch:"Roma Norte", url:"https://www.rappi.com.mx/restaurantes/1930251016-fat-bastard"}], uber: [{branch:"Roma Norte", url:"https://www.ubereats.com/mx/store/fat-bastard-roma-norte/STKDt5BSV7uU_DOM0PbWBQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"}] },
             "Brass monkey": { rappi: [], uber: [{branch:"Roma Sur", url:"https://www.ubereats.com/mx-en/store/brass-monkey-roma-sur/lptpii0rVw-yBJ_Z4egrrQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"}] },
@@ -302,7 +298,6 @@
             "Tiin Thai": { rappi: [{branch:"Anzures", url:"https://www.rappi.com.mx/restaurantes/1930234375-tiin-thai"}], uber: [{branch:"Anzures", url:"https://www.ubereats.com/mx/store/tiin-thai/3FH5oqSnXWCu8tkySoyzAQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhbXBlY2hlJTIwMzAwJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSnJieW4yVUhfMFlVUjk4Qlh1V3dyZW9BJTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTE5LjQwODE2MDQ5OTk5OTk5NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xNzEzODM4JTdE"}] }
         };
 
-        // marcas por defecto
         const DEFAULT = [
             {name:"Chubbies Burger",category:"Burgers · Fast Casual", menuUrl:"http://pide.chubbiesburger.mx/", instaUrl:"https://www.instagram.com/chubbies_burger?igsh=bnZlODF4a2txMWl4", thumb:"https://i.postimg.cc/zDt9P1cF/IMG-4348.webp", handle:"@chubbies_burger"},
             {name:"Muy Gallito",category:"Pollo · Street Food", menuUrl:"https://order.foodbot.ai/muygallito/", instaUrl:"https://www.instagram.com/muygallitomx?igsh=ZDczbHZtM2IxOG1w", thumb:"https://i.postimg.cc/JndPKRzz/IMG-4351.webp", handle:"@muygallitomx"},
@@ -337,7 +332,6 @@
                 `;
                 container.appendChild(card);
             });
-            // attach event listeners to all apps buttons
             document.querySelectorAll('.apps-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const brandName = btn.getAttribute('data-brand');
@@ -346,7 +340,6 @@
             });
         }
 
-        // modal logic
         const modal = document.getElementById('deliveryModal');
         const modalTitle = document.getElementById('modalBrandTitle');
         const modalBody = document.getElementById('modalBodyContent');
@@ -356,49 +349,35 @@
             const data = deliveryData[brandName] || { rappi: [], uber: [] };
             const rappiList = data.rappi || [];
             const uberList = data.uber || [];
-            const hasDidi = false; // no hay Didi en el archivo proporcionado
 
-            modalTitle.innerText = `${brandName} · Apps de Delivery`;
+            modalTitle.innerText = `${brandName} · Delivery Apps`;
             let html = '';
 
-            // Rappi section
-            html += `<div class="app-category"><h4><i class="fab fa-rapp"></i> Rappi</h4><div class="app-links-list">`;
-            if(rappiList.length === 0){
-                html += `<div class="empty-message"><i class="fas fa-info-circle"></i> No disponible en Rappi</div>`;
-            } else {
-                rappiList.forEach(item => {
-                    html += `<div class="app-link-item"><a href="${item.url}" target="_blank" rel="noopener"><span class="branch"><i class="fas fa-location-dot"></i> ${item.branch}</span><span class="url-trunc">ir a Rappi →</span></a></div>`;
-                });
-            }
-            html += `</div></div>`;
-
-            // Uber Eats section
+            // 1. UBER primero
             html += `<div class="app-category"><h4><i class="fab fa-uber"></i> Uber Eats</h4><div class="app-links-list">`;
-            if(uberList.length === 0){
-                html += `<div class="empty-message"><i class="fas fa-info-circle"></i> No disponible en Uber Eats</div>`;
-            } else {
-                uberList.forEach(item => {
-                    html += `<div class="app-link-item"><a href="${item.url}" target="_blank" rel="noopener"><span class="branch"><i class="fas fa-location-dot"></i> ${item.branch}</span><span class="url-trunc">pedir en Uber →</span></a></div>`;
-                });
-            }
+            if(uberList.length === 0) html += `<div class="empty-message"><i class="fas fa-info-circle"></i> No disponible en Uber Eats</div>`;
+            else uberList.forEach(item => { html += `<div class="app-link-item"><a href="${item.url}" target="_blank" rel="noopener"><span class="branch"><i class="fas fa-location-dot"></i> ${item.branch}</span><span class="url-trunc">pedir en Uber →</span></a></div>`; });
             html += `</div></div>`;
 
-            // Didi (sin datos del archivo)
-            html += `<div class="app-category"><h4><i class="fas fa-car"></i> Didi Food</h4><div class="empty-message"><i class="fas fa-ban"></i> No hay enlaces de Didi disponibles en el archivo.</div></div>`;
+            // 2. RAPPI segundo
+            html += `<div class="app-category"><h4><i class="fab fa-rapp"></i> Rappi</h4><div class="app-links-list">`;
+            if(rappiList.length === 0) html += `<div class="empty-message"><i class="fas fa-info-circle"></i> No disponible en Rappi</div>`;
+            else rappiList.forEach(item => { html += `<div class="app-link-item"><a href="${item.url}" target="_blank" rel="noopener"><span class="branch"><i class="fas fa-location-dot"></i> ${item.branch}</span><span class="url-trunc">ir a Rappi →</span></a></div>`; });
+            html += `</div></div>`;
+
+            // 3. DIDI (sin datos del archivo)
+            html += `<div class="app-category"><h4><i class="fas fa-car"></i> Didi Food</h4><div class="empty-message"><i class="fas fa-ban"></i> No hay enlaces de Didi en el archivo proporcionado.</div></div>`;
 
             modalBody.innerHTML = html;
             modal.classList.add('active');
         }
 
-        function closeModalFunc(){
-            modal.classList.remove('active');
-        }
+        function closeModalFunc(){ modal.classList.remove('active'); }
         closeModal.addEventListener('click', closeModalFunc);
         modal.addEventListener('click', (e) => { if(e.target === modal) closeModalFunc(); });
-        // cierre con escape
         document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && modal.classList.contains('active')) closeModalFunc(); });
 
-        // admin panel legacy
+        // admin
         const adminPanel=document.getElementById('admin-panel');
         document.getElementById('toggle-admin-btn').addEventListener('click',e=>{
             e.stopPropagation();
